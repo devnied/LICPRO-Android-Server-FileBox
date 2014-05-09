@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.0.xsd
+        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd"
+>
+    <context:annotation-config />
+    <context:component-scan base-package="fr.devnied.filebox" />
+    <jpa:repositories base-package="fr.devnied.filebox.dao" />
+    <task:annotation-driven />
+
+    <context:property-placeholder location="classpath:config.properties,file:${catalina.base}/conf/filebox/filebox.properties" ignore-resource-not-found="true" />
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager"
+          p:cache-manager-ref="ehcache" />
+    <bean id="ehcache"
+          class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+          p:config-location="classpath:ehcache.xml" />
+
+    <!-- Text encryptor -->
+    <bean id="textEncryptor" class="org.springframework.security.crypto.encrypt.Encryptors"
+          factory-method="queryableText" lazy-init="false">
+        <constructor-arg value="${security.text.password}" />
+        <constructor-arg value="${security.text.salt}" />
+    </bean>
+
+    <bean id="passwordEncoder"
+          class="org.springframework.security.crypto.password.StandardPasswordEncoder"
+          primary="true" />
+
+
+
+    <!-- Gestionnaire de transactions Hibernate -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          p:driverClassName="${db.driver}"
+          p:url="${db.url}" p:username="${db.user}" p:password="${db.password}"/>
+
+    <!-- Adapter Hibernate pour JPA -->
+    <bean id="jpaAdapter"
+          class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+          p:database="${jpa.database}" p:showSql="${hibernate.show_sql}"
+          p:databasePlatform="${hibernate.dialect}" />
+
+    <!-- EntityManager factory -->
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          p:dataSource-ref="dataSource" p:jpaVendorAdapter-ref="jpaAdapter"
+          p:jpaPropertyMap-ref="jpaPropertyMap" p:packagesToScan="fr.devnied.filebox.model" />
+
+    <!-- Propriétés Hibernate -->
+    <util:map id="jpaPropertyMap">
+        <entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}" />
+        <entry key="hibernate.dialect" value="${hibernate.dialect}" />
+
+        <!-- Utilisation du cache de 2e niveau pour les requêtes -->
+        <entry key="hibernate.cache.use_query_cache" value="true" />
+        <entry key="hibernate.cache.use_second_level_cache" value="true" />
+        <entry key="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory" />
+        <entry key="net.sf.ehcache.configurationResourceName" value="ehcache.xml" />
+        <entry key="hibernate.generate_statistics" value="false" />
+        <entry key="hibernate.cache.use_structured_entries" value="true" />
+        <entry key="hibernate.id.new_generator_mappings" value="true" />
+        <entry key="hibernate.session.events.log" value="false" />
+
+        <entry key="hibernate.default_batch_fetch_size" value="16" />
+        <entry key="hibernate.jdbc.use_get_generated_keys" value="true" />
+        <entry key="hibernate.jdbc.batch_size" value="30"  />
+        <entry key="hibernate.jdbc.batch_versioned_data" value="true" />
+        <entry key="hibernate.jdbc.fetch_size" value="100" />
+
+        <entry key="hibernate.cache.use_query_cache" value="true" />
+        <entry key="hibernate.cache.use_second_level_cache" value="true" />
+        <entry key="hibernate.cache.use_reference_entries" value="true" />
+
+        <entry key="hibernate.order_inserts" value="true" />
+        <entry key="hibernate.order_updates" value="true" />
+        <entry key="hibernate.show_sql" value="${hibernate.show_sql}" />
+        <entry key="hibernate.format_sql" value="true" />
+        <entry key="hibernate.use_sql_comments" value="false" />
+    </util:map>
+
+    <!-- Ce bean garantit que les exceptions hibernate ou jpa sont automatiquement
+    transformées en exception générique Spring 'DataAccessException' pour les
+    beans JPA. -->
+    <bean
+        class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+</beans>
