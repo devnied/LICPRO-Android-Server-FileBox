@@ -57,7 +57,7 @@ public class File extends AbstractEntity {
      * File length
      */
     @Column(name = "CONTENT_LENGTH")
-    private Integer contentLength;
+    private Long contentLength;
 
     /**
      * Is folder
@@ -82,7 +82,7 @@ public class File extends AbstractEntity {
     /**
      * File content
      */
-    @OneToOne(fetch = FetchType.LAZY, optional = true)
+    @OneToOne(fetch = FetchType.EAGER, optional = true, cascade = {CascadeType.ALL})
     @JoinColumn(name = "FILE_CONTENT", nullable = true)
     private FileContent fileContent;
 
@@ -129,11 +129,11 @@ public class File extends AbstractEntity {
         this.name = name;
     }
 
-    public Integer getContentLength() {
+    public Long getContentLength() {
         return contentLength;
     }
 
-    public void setContentLength(Integer contentLength) {
+    public void setContentLength(Long contentLength) {
         this.contentLength = contentLength;
     }
 

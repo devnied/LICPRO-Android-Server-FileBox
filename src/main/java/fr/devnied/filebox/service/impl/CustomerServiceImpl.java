@@ -10,6 +10,7 @@ import fr.devnied.filebox.exception.BusinessException;
 import fr.devnied.filebox.exception.NotFoundException;
 import fr.devnied.filebox.model.Customer;
 import fr.devnied.filebox.service.ICustomerService;
+import fr.devnied.filebox.service.IFileService;
 import fr.devnied.filebox.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
@@ -28,6 +29,12 @@ public class CustomerServiceImpl extends AbstractGenericService<Customer, Long, 
      */
     @Autowired
     private StandardPasswordEncoder passwordEncoder;
+
+    /**
+     * File service
+     */
+    @Autowired
+    private IFileService fileService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -57,6 +64,8 @@ public class CustomerServiceImpl extends AbstractGenericService<Customer, Long, 
         customer.setPassword(passwordEncoder.encode(pPassword));
         save(customer);
 
+        // init user files
+        fileService.initFile(customer);
     }
 
     @Override

@@ -21,8 +21,10 @@
     <context:component-scan base-package="fr.devnied.filebox" />
     <jpa:repositories base-package="fr.devnied.filebox.dao" />
     <task:annotation-driven />
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <context:property-placeholder location="classpath:config.properties,file:${catalina.base}/conf/filebox/filebox.properties" ignore-resource-not-found="true" />
+
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager"
           p:cache-manager-ref="ehcache" />
@@ -41,17 +43,14 @@
           class="org.springframework.security.crypto.password.StandardPasswordEncoder"
           primary="true" />
 
-
-
-    <!-- Gestionnaire de transactions Hibernate -->
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
-    </bean>
-
     <bean id="dataSource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource"
           p:driverClassName="${db.driver}"
           p:url="${db.url}" p:username="${db.user}" p:password="${db.password}"/>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 
     <!-- Adapter Hibernate pour JPA -->
     <bean id="jpaAdapter"

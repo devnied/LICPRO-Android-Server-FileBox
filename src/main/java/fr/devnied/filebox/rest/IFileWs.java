@@ -9,7 +9,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -37,6 +39,7 @@ public interface IFileWs {
     /**
      * Method used to get content of file
      *
+     * @param request
      * @param pToken
      * @param pId
      * @param pTime timestamp for the date
@@ -44,8 +47,7 @@ public interface IFileWs {
      */
     @GET
     @Path("/{token}/{id}")
-    Response getFile(@NotEmpty @PathParam("token") final String pToken,
+    Response getFile(@Context Request request, @NotEmpty @PathParam("token") final String pToken,
             @NotEmpty @PathParam("id") final String pId,
             @QueryParam("date") final long pTime);
-
 }

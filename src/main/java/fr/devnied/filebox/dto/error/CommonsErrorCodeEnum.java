@@ -13,6 +13,7 @@ public enum CommonsErrorCodeEnum {
     BAD_REQUEST("40000", "bad.request", null),
     USER_NOT_FOUND("40401", "user.not.found", "User not found"),
     TOKEN_INVALID("40402", "token.invalid", "Token invalid"),
+    FILE_NOT_FOUND("40403", "file.not.found", "File not found"),
     LOGIN_ALREADY_EXIST("60001", "login.exist", "Login exist"),
     UNKNOW_ERROR("50001", "unknown.error", "Unknown error");
 

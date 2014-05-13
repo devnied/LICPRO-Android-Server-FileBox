@@ -6,6 +6,7 @@ package fr.devnied.filebox.rest.impl;
 import fr.devnied.filebox.dto.response.FilesDto;
 import fr.devnied.filebox.rest.IFileWs;
 import fr.devnied.filebox.service.IFileService;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,8 @@ public class FileWsImpl implements IFileWs {
     }
 
     @Override
-    public Response getFile(String pToken, String pId, long pDate) {
-        return fileService.getFile(pToken, pId, pDate);
+    public Response getFile(Request request, String pToken, String pId, long pDate) {
+        return fileService.getFile(request, pToken, pId, pDate);
     }
 
 }
