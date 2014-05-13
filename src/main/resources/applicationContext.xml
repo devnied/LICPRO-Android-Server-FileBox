@@ -48,8 +48,9 @@
           p:driverClassName="${db.driver}"
           p:url="${db.url}" p:username="${db.user}" p:password="${db.password}"/>
 
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
+    <!-- Gestionnaire de transactions Hibernate -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
 
     <!-- Adapter Hibernate pour JPA -->

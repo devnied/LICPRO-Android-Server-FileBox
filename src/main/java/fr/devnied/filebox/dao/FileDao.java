@@ -47,7 +47,7 @@ public interface FileDao extends JpaRepository<File, Long> {
             + " INNER JOIN cus.listFile file"
             + " WHERE cus.id = :customerId"
             + " AND file.id = :id"
-            + " AND file.folder IS NOT NULL")
+            + " AND file.isFolder IS TRUE")
     boolean isFolder(@Param("customerId") Long customerId, @Param("id") Long fileId);
 
 }

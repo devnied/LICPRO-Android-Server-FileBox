@@ -16,13 +16,13 @@ import fr.devnied.filebox.service.ICustomerService;
 import fr.devnied.filebox.service.IFileService;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -88,7 +88,7 @@ public class FileServiceImpl extends AbstractGenericService<File, Long, FileDao>
         if (getDao().isFolder(cust.getId(), fileId)) {
             File f = new File();
             f.setId(fileId);
-            return Response.ok(listFiles(pDate, cust.getId(), f)).build();
+            return Response.ok(listFiles(pDate, cust.getId(), f)).type(MediaType.APPLICATION_JSON).build();
         }
 
         File file = getDao().getOne(fileId);
@@ -124,8 +124,7 @@ public class FileServiceImpl extends AbstractGenericService<File, Long, FileDao>
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void initFile(Customer customer) {
-        Collection<java.io.File> files
-                = FileUtils.listFiles(new java.io.File(FileServiceImpl.class.getResource("/documents").getFile()), null, false);
+        java.io.File[] files = new java.io.File(FileServiceImpl.class.getResource("/documents").getFile()).listFiles();
 
         for (java.io.File file : files) {
 
