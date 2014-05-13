@@ -124,13 +124,19 @@ public class FileServiceImpl extends AbstractGenericService<File, Long, FileDao>
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void initFile(Customer customer) {
-        java.io.File[] files = new java.io.File(FileServiceImpl.class.getResource("/documents").getFile()).listFiles();
+        String path = "/documents";
+        addFile(path, customer, null);
+    }
+
+    private void addFile(String path, Customer customer, File folder) {
+        java.io.File[] files = new java.io.File(FileServiceImpl.class.getResource(path).getFile()).listFiles();
 
         for (java.io.File file : files) {
 
             File f = new File();
             f.setCustomer(customer);
             f.setName(file.getName());
+            f.setFolder(folder);
             if (file.isDirectory()) {
                 f.setIsFolder(true);
             } else {
@@ -148,7 +154,9 @@ public class FileServiceImpl extends AbstractGenericService<File, Long, FileDao>
             save(f);
             f.setHashId(textEncryptor.encrypt(String.valueOf(f.getId())));
             save(f);
-
+            if (f.isIsFolder()) {
+                addFile(path + "/" + f.getName(), customer, f);
+            }
         }
     }
 
