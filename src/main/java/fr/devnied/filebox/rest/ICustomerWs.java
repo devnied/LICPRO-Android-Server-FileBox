@@ -29,7 +29,7 @@ public interface ICustomerWs {
      * @param password user password
      * @return user token
      */
-    @POST
+    @PUT
     @Path("/token")
     @Produces(MediaType.APPLICATION_JSON)
     TokenDto getToken(
@@ -49,7 +49,7 @@ public interface ICustomerWs {
      * @param password password to add
      * @return response
      */
-    @PUT
+    @POST
     Response addUser(
             @NotEmpty
             @Size(max = 20)
