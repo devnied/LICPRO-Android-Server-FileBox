@@ -40,12 +40,12 @@ public class FilesDto extends HttpExceptionDto {
         this.listFile = listFile;
     }
 
-    public Date getpLastUpdate() {
+    public Date getLastUpdate() {
         return lastUpdate;
     }
 
-    public void setpLastUpdate(Date pLastUpdate) {
-        this.lastUpdate = pLastUpdate;
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
 }

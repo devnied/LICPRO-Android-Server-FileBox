@@ -69,7 +69,7 @@ public class FileServiceImpl extends AbstractGenericService<File, Long, FileDao>
                 }
             }
         }
-        dto.setpLastUpdate(date);
+        dto.setLastUpdate(date);
         return dto;
     }
 
